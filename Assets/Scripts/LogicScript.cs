@@ -8,21 +8,21 @@ using Unity.VisualScripting;
 
 public class LogicScript : MonoBehaviour
 {
+    [HideInInspector] public bool gameStarted { get; private set; } = false;
     private int playerScore, bestScore;
     private AudioSource scoreSFX;
 
     [SerializeField] private GameObject gameOverScreen;
     [SerializeField] private TextMeshProUGUI scoreText, bestScoreText;
-    
-    // Clean this up lol
+
     [SerializeField] private BirdScript bird;
-    [SerializeField] private Rigidbody2D birdRB;
-    [SerializeField] private Animator birdAnimator;
     [SerializeField] private Animator circleWipe;
     [SerializeField] private PipeSpawnScript spawner;
     [SerializeField] private QuizStateManager quizManager;
+    [SerializeField] private TitleScreenScript titleScreen;
 
-    private void Start() {
+
+    void Awake() {
         if (!PlayerPrefs.HasKey("best")) {
             PlayerPrefs.SetInt("best", 0);
         }
@@ -32,10 +32,9 @@ public class LogicScript : MonoBehaviour
         scoreSFX = gameObject.GetComponent<AudioSource>();
     }
 
-    [ContextMenu("Increment Score")]
-    public void addScore(int scoreToAdd)
-    {
-        if (bird.birdIsAlive) {
+    public void addScore(int scoreToAdd) {
+        // Update score if conditions met
+        if (bird.birdIsAlive && gameStarted) {
             scoreSFX.Play();
             playerScore += scoreToAdd;
             scoreText.text = playerScore.ToString();
@@ -49,25 +48,26 @@ public class LogicScript : MonoBehaviour
     }
 
     public void startGame() {
+        // 1. Hide Title Screen
+        // 2. Enable spawners
+        // 3. Set flag
+        titleScreen.hideTitleScreen();
         spawner.enabled = true;
         quizManager.enabled = true;
-        birdAnimator.SetTrigger("startBird");
-        bird.enabled = true;
-        birdRB.gravityScale = 5;
+        gameStarted = !gameStarted;
     }
 
-    public void restartGame()
-    {
+    public void restartGame() {
         StartCoroutine(startCircleWipe());
     }
 
-    public void gameOver()
-    {
-        //gameOverSFX.Play();
+    // Display game over screen, update playerprefs
+    public void gameOver() {
         gameOverScreen.SetActive(true);
         PlayerPrefs.SetInt("best", bestScore);
     }
 
+    // Wait for circle wipe for finish before reloading scene
     IEnumerator startCircleWipe() {
         circleWipe.SetTrigger("RetryGame");
         yield return new WaitForSeconds(1);

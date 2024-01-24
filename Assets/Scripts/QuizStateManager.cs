@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class QuizStateManager : MonoBehaviour
 {
+    // State Machine
     QuizBaseState currentState;
     public QuizNormalState normalState = new QuizNormalState();
     public QuizPromptState promptState = new QuizPromptState();
@@ -16,7 +17,6 @@ public class QuizStateManager : MonoBehaviour
     public PipeSpawnScript pipeSpawner;
 
     private int numBirds = 0;
-    // private int curentBird = 0;
     private GameObject currentBird;
     private int correctGap = 0;
     private int numAnswers = 2;
@@ -73,18 +73,20 @@ public class QuizStateManager : MonoBehaviour
     }
 
     public void spawnRandomBird() {
+        // Generate a random Bird and random correct gap (top/bottom)
         correctGap = Random.Range(0, numAnswers);
         currentBird = birdPrompt.GetChild(Random.Range(0, numBirds)).gameObject;
 
+        // Set the answer texts
         string correctAnswer = currentBird.name.ToUpper();
         string incorrectAnswer = "";
         do {
             incorrectAnswer = birdNames[Random.Range(0, numBirdNames)];
         } while (correctAnswer == incorrectAnswer);
-
         Answer[0].GetComponent<TextMeshPro>().text = correctGap == 0 ? correctAnswer : incorrectAnswer;
         Answer[1].GetComponent<TextMeshPro>().text = correctGap == 1 ? correctAnswer : incorrectAnswer;
 
+        // Generate the prompt and answer texts
         currentBird.SetActive(true);
         currentBird.transform.position = new Vector3(64, 0, 1);
         currentBird.LeanMoveX(0, 2f).setEaseOutExpo();
@@ -101,9 +103,12 @@ public class QuizStateManager : MonoBehaviour
     }
 
     public void despawnExistingBird() {
+        // Animation to hide prompt
         currentBird.LeanMoveX(-64, 2f).setEaseOutExpo();
         Answer[0].LeanMoveX(-48.2f, 2f).setEaseOutExpo();
         Answer[1].LeanMoveX(-48.2f, 2f).setEaseOutExpo();
+        
+        // Delay deactivation until after animation completes
         StartCoroutine(delayDeactivte(currentBird, 2.1f));
         StartCoroutine(delayDeactivte(Answer[0], 2.1f));
         StartCoroutine(delayDeactivte(Answer[1], 2.1f));

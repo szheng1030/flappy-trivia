@@ -5,17 +5,15 @@ using UnityEngine;
 public class PipeMiddleScript : MonoBehaviour
 {
     [SerializeField] private LogicScript logic;
+    private int birdLayer = 3;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.layer == 3)
-        {
+    // Increment score when detect collision with bird
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.gameObject.layer == birdLayer) {
             logic.addScore(1);
         }
     }
