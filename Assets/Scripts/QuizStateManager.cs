@@ -11,27 +11,21 @@ public class QuizStateManager : MonoBehaviour
     public QuizAnswerState answerState = new QuizAnswerState();
     public QuizCooldownState cooldownState = new QuizCooldownState();
 
-    public LogicScript logic;
-    public BirdScript bird;
-
-    public GameObject pipeSpawner;
+    [SerializeField] private LogicScript logic;
+    [SerializeField] private BirdScript bird;
+    public PipeSpawnScript pipeSpawner;
 
     private int numBirds = 0;
-    private int randomBird = 0;
+    // private int curentBird = 0;
     private GameObject currentBird;
+    private int correctGap = 0;
+    private int numAnswers = 2;
+    private GameObject lastJudgeObject;
+    private int numBirdNames;
 
-    public int correctGap = 0;
-
-    [SerializeField]
-    private Transform birdPrompt;
-
-    [SerializeField]
-    private GameObject[] Answer;
-
-    [SerializeField]
-    private GameObject BirdOfDeath;
-
-    private GameObject lastJudge;
+    [SerializeField] private Transform birdPrompt;
+    [SerializeField] private GameObject[] Answer;
+    [SerializeField] private GameObject BirdOfDeath;
 
     private List<string> birdNames = new List<string>() {
         "HOATZIN",
@@ -51,28 +45,20 @@ public class QuizStateManager : MonoBehaviour
         "RHINOCEROS HORNBILL"
     };
 
-    private int numBirdNames;
-
-    // Start is called before the first frame update
     void Start() {
 
+        // Add actual birds to list of bird names
         numBirds = birdPrompt.childCount;
-
         for (int i = 0; i < numBirds; i++) {
             birdNames.Add(birdPrompt.GetChild(i).transform.name.ToUpper());
         }
-
         numBirdNames = birdNames.Count;
 
-        logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
-        bird = GameObject.FindGameObjectWithTag("Bird").GetComponent<BirdScript>();
-
+        // State Initialization
         currentState = normalState;
-
         currentState.EnterState(this);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (bird.birdIsAlive) {
@@ -87,10 +73,8 @@ public class QuizStateManager : MonoBehaviour
     }
 
     public void spawnRandomBird() {
-        correctGap = Random.Range(0, 2);
-        randomBird = Random.Range(0, numBirds);
-
-        currentBird = birdPrompt.GetChild(randomBird).gameObject;
+        correctGap = Random.Range(0, numAnswers);
+        currentBird = birdPrompt.GetChild(Random.Range(0, numBirds)).gameObject;
 
         string correctAnswer = currentBird.name.ToUpper();
         string incorrectAnswer = "";
@@ -104,7 +88,6 @@ public class QuizStateManager : MonoBehaviour
         currentBird.SetActive(true);
         currentBird.transform.position = new Vector3(64, 0, 1);
         currentBird.LeanMoveX(0, 2f).setEaseOutExpo();
-
 
         Answer[0].SetActive(true);
         Answer[0].transform.position = new Vector3(79.8f, 3, 0);
@@ -124,7 +107,7 @@ public class QuizStateManager : MonoBehaviour
         StartCoroutine(delayDeactivte(currentBird, 2.1f));
         StartCoroutine(delayDeactivte(Answer[0], 2.1f));
         StartCoroutine(delayDeactivte(Answer[1], 2.1f));
-        StartCoroutine(delayDeactivte(lastJudge, 2.1f));
+        StartCoroutine(delayDeactivte(lastJudgeObject, 2.1f));
     }
 
     public bool isPipeFlagSet() {
@@ -140,14 +123,13 @@ public class QuizStateManager : MonoBehaviour
         if (gapIndex == correctGap) {
             logic.addScore(5);
             Debug.Log("Correct!");
-            lastJudge = Answer[gapIndex].transform.Find("Correct").gameObject;
-            lastJudge.SetActive(true);
+            lastJudgeObject = Answer[gapIndex].transform.Find("Correct").gameObject;
+            lastJudgeObject.SetActive(true);
         } else {
             Debug.Log("Incorrect...");
             BirdOfDeath.SetActive(true);
-            lastJudge = Answer[gapIndex].transform.Find("Incorrect").gameObject;
-            lastJudge.SetActive(true);
-            //bird.killBird();
+            lastJudgeObject = Answer[gapIndex].transform.Find("Incorrect").gameObject;
+            lastJudgeObject.SetActive(true);
         }
     }
 

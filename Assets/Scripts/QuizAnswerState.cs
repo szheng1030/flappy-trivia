@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class QuizAnswerState : QuizBaseState
 {
+    // Quiz Answer State
+    // -> Spawn answer pipe
+
     public override void EnterState(QuizStateManager quiz) {
         quiz.pipeSpawner.GetComponent<PipeSpawnScript>().isNormalSpawn = false;
 

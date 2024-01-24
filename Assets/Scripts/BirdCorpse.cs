@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class BirdCorpse : MonoBehaviour
 {
-
     private Rigidbody2D rigidBody2D;
+    private int deathStrength = 35;
+    private float deathSpin = 1;
 
-    // Start is called before the first frame update
     void Start()
     {
+        // Send corpse flying up
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
-        float deathStrength = GetComponentInParent<BirdScript>().flapStrength * 1.5f;
         rigidBody2D.velocity = Vector2.up * deathStrength;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        rigidBody2D.rotation += 1.0f;
+        // Give corpse some rotation
+        rigidBody2D.rotation += deathSpin;
     }
 }

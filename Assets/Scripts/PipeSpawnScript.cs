@@ -6,22 +6,17 @@ using UnityEngine;
 
 public class PipeSpawnScript : MonoBehaviour
 {
-    public GameObject[] topPipe;
-    public GameObject[] bottomPipe;
+    [SerializeField] private GameObject[] topPipe;
+    [SerializeField] private GameObject[] bottomPipe;
+    [SerializeField] private GameObject AnswerPipe;
 
-    public GameObject AnswerPipe;
-    public float spawnRate = 2.5f;
-    public float answerRate = 4.0f;
-
+    private float spawnRate = 2.5f;
+    private float answerRate = 2.5f;
     private float timer = 0;
     private int spawnFlag = 0;
-
-    public float heightOffset = 12;
+    private float heightOffset = 7;
 
     public bool isNormalSpawn = false;
-    public bool isPromptSpawn = false;
-
-    public GameObject checkmark;
 
     // Start is called before the first frame update
     void Start()

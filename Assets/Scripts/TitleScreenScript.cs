@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class TitleScreenScript : MonoBehaviour
 {
+    private float tweenDuration = 1f;
+    private float tweenDelay = 0.1f;
 
-    private Transform titleScreen;
-
+    // Move title screen components down after pressing start
     public void hideTitleScreen() {
-        titleScreen = gameObject.transform;
-        titleScreen.LeanMoveLocalY(-Screen.height, 1f).setEaseInOutBack().delay = 0.1f;
+        gameObject.transform.LeanMoveLocalY(-Screen.height, tweenDuration).setEaseInOutBack().delay = tweenDelay;
     } 
 
 }

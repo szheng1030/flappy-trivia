@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class QuizCooldownState : QuizBaseState
 {
+    // Quiz Cooldown State
+    // -> Guarantee to spawn at least 3 normal pipes after answer
 
-    int cooldownLength = 3;
-    int currentCooldown = 0;
+    private int cooldownLength = 3;
+    private int currentCooldown = 0;
 
     public override void EnterState(QuizStateManager quiz) {
         quiz.pipeSpawner.GetComponent<PipeSpawnScript>().isNormalSpawn = true;
@@ -20,6 +22,7 @@ public class QuizCooldownState : QuizBaseState
             currentCooldown++;
         }
 
+        // Add delay to the prompt disappearing post-answer
         if (currentCooldown >= cooldownLength) {
             quiz.despawnExistingBird();
             quiz.SwitchState(quiz.normalState);

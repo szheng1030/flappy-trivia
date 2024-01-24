@@ -14,10 +14,4 @@ public class GameOver : MonoBehaviour
         gameOverGUI.localPosition = new Vector2(0, Screen.height);
         gameOverGUI.LeanMoveLocalY(0, 1f).setEaseOutExpo().delay = 0.1f;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

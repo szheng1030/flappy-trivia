@@ -4,71 +4,59 @@ using UnityEngine;
 
 public class BirdScript : MonoBehaviour
 {
+    // Members
+    [HideInInspector] public bool birdIsAlive { get; private set; } = true;
+    private int flapStrength = 23;
+    private int lowerKillZone = -22;
 
+    // Self components
     private Rigidbody2D myRigidBody;
-    public float flapStrength;
-    private LogicScript logic;
-    public bool birdIsAlive = true;
-
-    public Animator animator;
-
-    private float flapTime = 0.03f;
-    private float currentFlap = 0;
-
-    [SerializeField]
-    private GameObject corpse;
-
-    [SerializeField]
-    private PipeSpawnScript spawner;
-
+    private Animator animator;
     private AudioSource gameOverSFX;
 
-    // Start is called before the first frame update
+    // Other components
+    [SerializeField] private LogicScript logic;
+    [SerializeField] private GameObject corpse;
+
     void Start()
     {
+        // Self component assignments
         myRigidBody = gameObject.GetComponent<Rigidbody2D>();
-        logic = GameObject.FindGameObjectWithTag("Logic").GetComponent<LogicScript>();
-        spawner = GameObject.FindGameObjectWithTag("Spawner").GetComponent<PipeSpawnScript>();
-
-        gameOverSFX = transform.GetChild(0).gameObject.GetComponent<AudioSource>();
+        animator = gameObject.GetComponent<Animator>();
+        gameOverSFX = gameObject.GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && birdIsAlive)
-        {
+        // Space to jump
+        if (Input.GetKeyDown(KeyCode.Space) && birdIsAlive) {
             myRigidBody.velocity = Vector2.up * flapStrength;
-            animator.SetBool("IsFlapping", true);
+            animator.SetTrigger("birdFlap");
         }
 
-        if (transform.position.y < -22 && birdIsAlive) {
+        // Kill bird if fall below screen
+        if (transform.position.y < lowerKillZone && birdIsAlive) {
             killBird();
-        }
-
-        if (animator.GetBool("IsFlapping")) {
-            currentFlap += Time.deltaTime;
-            if (currentFlap >= flapTime) {
-                currentFlap = 0;
-                animator.SetBool("IsFlapping", false);
-            }
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        killBird();
+        // Excluding skybox, all collisions should kill player
+        if (collision.gameObject.tag != "Skybox" && birdIsAlive) {
+            killBird();
+        }
     }
 
     public void killBird() {
-        logic.gameOver();
+        // Game over handling
         birdIsAlive = false;
+        logic.gameOver();
+        gameOverSFX.Play();
+        
+        // Spawn corpse gameobject; hid original player sprite
         GetComponent<SpriteRenderer>().enabled = false;
         corpse.SetActive(true);
-        gameOverSFX.Play();
-
-
-        //Destroy(spawner);
     }
 
 

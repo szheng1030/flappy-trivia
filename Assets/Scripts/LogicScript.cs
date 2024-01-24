@@ -8,33 +8,19 @@ using Unity.VisualScripting;
 
 public class LogicScript : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject gameOverScreen;
-
-    [SerializeField]
-    private TextMeshProUGUI scoreText, bestScoreText;
     private int playerScore, bestScore;
-
-    [SerializeField]
-    private BirdScript bird;
-
-    [SerializeField]
-    private Rigidbody2D birdRB;
-
-    [SerializeField]
-    private Animator birdAnimator;
-
-    [SerializeField]
-    private Animator circleWipe;
-
-    [SerializeField]
-    private PipeSpawnScript spawner;
-
-    [SerializeField]
-    private QuizStateManager quizManager;
-
     private AudioSource scoreSFX;
-    // private AudioSource gameOverSFX;
+
+    [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private TextMeshProUGUI scoreText, bestScoreText;
+    
+    // Clean this up lol
+    [SerializeField] private BirdScript bird;
+    [SerializeField] private Rigidbody2D birdRB;
+    [SerializeField] private Animator birdAnimator;
+    [SerializeField] private Animator circleWipe;
+    [SerializeField] private PipeSpawnScript spawner;
+    [SerializeField] private QuizStateManager quizManager;
 
     private void Start() {
         if (!PlayerPrefs.HasKey("best")) {
@@ -43,9 +29,7 @@ public class LogicScript : MonoBehaviour
         bestScore = PlayerPrefs.GetInt("best");
         bestScoreText.text = bestScore.ToString();
 
-        scoreSFX = transform.GetChild(0).gameObject.GetComponent<AudioSource>();
-
-        // gameOverSFX = transform.GetChild(1).gameObject.GetComponent<AudioSource>();
+        scoreSFX = gameObject.GetComponent<AudioSource>();
     }
 
     [ContextMenu("Increment Score")]
