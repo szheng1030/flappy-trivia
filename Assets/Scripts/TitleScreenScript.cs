@@ -7,12 +7,12 @@ using UnityEngine.UI;
 
 public class TitleScreenScript : MonoBehaviour
 {
-    private float tweenDuration = 1f;
+    private float tweenDuration = 1.5f;
     private float tweenDelay = 0.1f;
 
 
     public void hideTitleScreen() {
-        gameObject.transform.LeanMoveLocalY(-Screen.height, tweenDuration).setEaseInOutBack().delay = tweenDelay;
+        gameObject.transform.LeanMoveLocalY(-1500, tweenDuration).setEaseInOutBack().delay = tweenDelay;
     }
 
 }
